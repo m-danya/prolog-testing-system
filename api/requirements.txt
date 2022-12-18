@@ -1,0 +1,5 @@
+Flask==2.2.2
+flask_restful==0.3.9
+Jinja2==3.1.2
+PyYAML==6.0
+Werkzeug==2.2.2

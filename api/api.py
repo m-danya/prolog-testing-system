@@ -1,5 +1,6 @@
 import argparse
 import os
+import traceback
 
 import werkzeug
 import yaml
@@ -9,14 +10,18 @@ from yaml import Loader
 from uuid import uuid4
 import jinja2
 
-request_parser = reqparse.RequestParser()
-request_parser.add_argument('type', type=str)
-request_parser.add_argument('task', type=str)
-request_parser.add_argument('file_id', type=str)
 
-upload_parser = reqparse.RequestParser()
-upload_parser.add_argument('file', type=werkzeug.datastructures.FileStorage,
+SUBMISSIONS_DIRECTORY = 'submissions'
+TESTS_DIRECTORY = 'tests'
+
+submit_parser = reqparse.RequestParser()
+submit_parser.add_argument('submission', type=werkzeug.datastructures.FileStorage,
                            location='files')
+
+execute_parser = reqparse.RequestParser()
+execute_parser.add_argument('type', type=str)
+execute_parser.add_argument('task', type=str)
+execute_parser.add_argument('submission_id', type=str)
 
 loader = jinja2.FileSystemLoader(searchpath="./")
 environment = jinja2.Environment(loader=loader)
@@ -36,7 +41,7 @@ def parse_output(output):
 def check_output(output, task, only_yes_no):
     result = []
     failed = False
-    with open(os.path.join('tests', task, 'correct.yaml')) as f:
+    with open(os.path.join(TESTS_DIRECTORY, task, 'correct.yaml')) as f:
         correct = yaml.load(f, Loader=Loader)
 
     for elem in output:
@@ -73,41 +78,45 @@ def check_output(output, task, only_yes_no):
     return result
 
 
-class Submit(Resource):
+class Execute(Resource):
     def post(self):
         try:
-            args = request_parser.parse_args()
+            args = execute_parser.parse_args()
             if args.type is None:
                 args.type = 'gprolog'
-            if args.file_id is None:
+            if args.submission_id is None:
                 return {'message': 'File of Prolog program is required', 'status': 400}, 400
-            if args.file_id + '.pl' not in os.listdir('files'):
+            if args.submission_id + '.pl' not in os.listdir(SUBMISSIONS_DIRECTORY):
                 return {'message': 'File of Prolog program not found', 'status': 404}, 404
             if args.task is None:
                 return {'message': 'Task name is required', 'status': 400}, 400
             if args.type not in ['gprolog', 'ХЛП']:
                 return {'message': 'Bad program type', 'status': 400}, 400
             template = environment.get_template('testing-system.j2')
-            script = template.render(file='files/' + args.file_id + '.pl', test='tests/' + args.task + '/run.pl')
+            script = template.render(submission_file=SUBMISSIONS_DIRECTORY +'/' + args.submission_id + '.pl', test_file=TESTS_DIRECTORY + '/' + args.task + '/run.pl')
             stream = os.popen(script)
             output = stream.read()
             output, only_yes_no = parse_output(output)
             result = check_output(output, args.task, only_yes_no)
-            return {'message': 'Submit success', 'result': result, 'status': 200}, 200
+            return {'message': 'Successfully executed', 'result': result, 'status': 200}, 200
         except Exception as e:
+            traceback.print_exc()
             return {'message': 'Server error: %s' % e, 'status': 500}, 500
 
 
-class Upload(Resource):
+class Submit(Resource):
     def post(self):
         try:
-            args = upload_parser.parse_args()
-            if args.file is None:
+            args = submit_parser.parse_args()
+            print(args)
+            if args.submission is None:
                 return {'message': 'File of Prolog program is required', 'status': 400}, 400
-            file_id = str(uuid4())
-            args.file.save(os.path.join('files', file_id + '.pl'))
-            return {'file_id': file_id, 'message': 'Upload success', 'status': 200}, 200
+
+            submission_id = str(uuid4())
+            args.submission.save(os.path.join(SUBMISSIONS_DIRECTORY, submission_id + '.pl'))
+            return {'submission_id': submission_id, 'message': 'Successfully submitted', 'status': 200}, 200
         except Exception as e:
+            traceback.print_exc()
             return {'message': 'Server error: %s' % e, 'status': 500}, 500
 
 
@@ -117,12 +126,12 @@ def parse_args(argv):
                         metavar='<host_address>',
                         type=str,
                         default='127.0.0.1',
-                        help='Host of server')
+                        help='Server hostname')
     parser.add_argument('--port', '-p',
                         metavar='<port>',
                         default=3001,
                         type=int,
-                        help='Port of server')
+                        help='Server port')
     try:
         args, args_list = parser.parse_known_args(argv)
     except argparse.ArgumentError:
@@ -133,7 +142,7 @@ def parse_args(argv):
 app = Flask(__name__)
 api = Api()
 api.add_resource(Submit, "/submit")
-api.add_resource(Upload, "/upload")
+api.add_resource(Execute, "/execute")
 api.init_app(app)
 
 
@@ -143,6 +152,6 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    if not os.path.exists('files'):
-        os.makedirs('files')
+    if not os.path.exists(SUBMISSIONS_DIRECTORY):
+        os.makedirs(SUBMISSIONS_DIRECTORY)
     main()

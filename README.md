@@ -1,30 +1,46 @@
 # prolog-testing-system
 
-Work in progress.
+**Work in progress.**
 
 Run server:
-```python
-sudo apt install gprolog
-python3 ./api/api.py
+```bash
+sudo apt install gprolog python3-venv
+cd api
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python api.py
 ```
-For upload file:
-```http://127.0.0.1:3001/upload with form field 'file'```
 
-Returning:
+## API description
+
+Currently, the pipeline is like this:
+1) Submitting the `.pl` file to the system
+2) Executing this program on a set of tests
+
+#### Submitting a program
+
+`http://127.0.0.1:3001/submit` with form field `'submission'`
+
+Response:
 ```json
 {
-    "file_id": "90c5b537-43f4-47e2-a1da-638a457c2b7f",
-    "message": "Upload success",
+    "submission_id": "90c5b537-43f4-47e2-a1da-638a457c2b7f",
+    "message": "Successfully submitted",
     "status": 200
 }
 ```
-For execution:
-```POST http://127.0.0.1:3001/submit with args {"type": "gprolog", "task": "task_2", "file_id": "90c5b537-43f4-47e2-a1da-638a457c2b7f"}```
 
-Returning:
+#### Executing a program on a set of tests
+
+`POST http://127.0.0.1:3001/execute` with args
+`{"type": "gprolog", "task": "task_2", "submission_id": 
+"90c5b537-43f4-47e2-a1da-638a457c2b7f"}`
+
+Response:
 ```json
 {
-    "message": "Submit success",
+    "message": "Successfully executed",
     "result": [
         true,
         true,

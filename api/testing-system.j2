@@ -1,1 +1,1 @@
-cat {{ test }} | sed --expression='s/^\(.*\)\.$/bagof\(_,\1, _\)\./g' | gprolog --consult-file {{ file }}
+cat {{ test_file }} | sed --expression='s/^\(.*\)\.$/bagof\(_,\1, _\)\./g' | gprolog --consult-file {{ submission_file }}
