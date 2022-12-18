@@ -61,7 +61,7 @@ def check_output(output, task, only_yes_no):
                     errors.append(str(correct[i // idx].get(prolog_parse[0])) + ' != ' + str(prolog_parse[1]))
                     tmp_result.append(False)
             else:
-                if 'yes' in output[i + j]:
+                if str(correct[i // idx].get('correct')) in str(output[i + j]):
                     tmp_result.append(True)
                 else:
                     tmp_result.append(False)

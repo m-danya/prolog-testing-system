@@ -1,8 +1,8 @@
- - correct: yes
+ - correct: 'yes'
    Length: 0
- - correct: yes
+ - correct: 'yes'
    Length: 3
- - correct: yes
+ - correct: 'yes'
    Length: 2
- - correct: yes
+ - correct: 'yes'
    Length: 4
