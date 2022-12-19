@@ -38,15 +38,122 @@ Response:
 "90c5b537-43f4-47e2-a1da-638a457c2b7f"}`
 
 Response:
+
 ```json
 {
     "message": "Successfully executed",
     "result": [
-        true,
-        true,
-        true,
-        true
+        {
+            "test_number": 1,
+            "result": "WA: output mismatch",
+            "output_lines": [
+                "Length = 1",
+                "yes"
+            ],
+            "correct_lines": [
+                "Length = 0",
+                "yes"
+            ]
+        },
+        {
+            "test_number": 2,
+            "result": "OK",
+            "output_lines": [
+                "Length = 3",
+                "yes"
+            ],
+            "correct_lines": [
+                "Length = 3",
+                "yes"
+            ]
+        },
+        {
+            "test_number": 3,
+            "result": "OK",
+            "output_lines": [
+                "Length = 2",
+                "yes"
+            ],
+            "correct_lines": [
+                "Length = 2",
+                "yes"
+            ]
+        },
+        {
+            "test_number": 4,
+            "result": "OK",
+            "output_lines": [
+                "Length = 4",
+                "yes"
+            ],
+            "correct_lines": [
+                "Length = 4",
+                "yes"
+            ]
+        }
     ],
     "status": 200
 }
+
+```
+
+## Development scripts
+For now one can use `api/submit.sh` and `api/execute.sh` scripts to send 
+requests like this:
+
+```bash
+$ ./submit.sh path/to/my_program.pl
+{
+    "submission_id": "2d666df2-20b5-42da-9303-279481677f57",
+    "message": "Successfully submitted",
+    "status": 200
+}
+$ ./execute.sh task_1 2d666df2-20b5-42da-9303-279481677f57
+{
+    "message": "Successfully executed",
+    "result": [
+        {
+            "test_number": 1,
+            "result": "OK",
+            "output_lines": [
+                "yes"
+            ],
+            "correct_lines": [
+                "yes"
+            ]
+        },
+        {
+            "test_number": 2,
+            "result": "OK",
+            "output_lines": [
+                "no"
+            ],
+            "correct_lines": [
+                "no"
+            ]
+        },
+        {
+            "test_number": 3,
+            "result": "OK",
+            "output_lines": [
+                "yes"
+            ],
+            "correct_lines": [
+                "yes"
+            ]
+        },
+        {
+            "test_number": 4,
+            "result": "OK",
+            "output_lines": [
+                "yes"
+            ],
+            "correct_lines": [
+                "yes"
+            ]
+        }
+    ],
+    "status": 200
+}
+
 ```
