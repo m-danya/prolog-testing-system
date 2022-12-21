@@ -1,0 +1,1 @@
+parent(maria, kolya).

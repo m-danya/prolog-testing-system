@@ -1,0 +1,1 @@
+descendant(X, max).

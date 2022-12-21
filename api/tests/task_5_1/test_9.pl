@@ -1,0 +1,1 @@
+grandfather(kolya, vlad).

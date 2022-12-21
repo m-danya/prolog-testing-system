@@ -1,0 +1,1 @@
+descendant(max, dima).

@@ -1,0 +1,1 @@
+grandfather(Person, vlad).

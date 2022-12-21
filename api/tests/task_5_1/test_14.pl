@@ -1,0 +1,1 @@
+brother(nastya, maria).

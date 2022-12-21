@@ -1,6 +1,8 @@
 import dataclasses
 import os
 import re
+import signal
+import subprocess
 
 from settings import *
 from dataclasses import dataclass
@@ -18,11 +20,35 @@ class TestResult:
 def execute_on_tests(submission_id, task, cmd_template):
     execution_result = []
     for test_number, test_pl, test_ans in get_task_tests(task):
+        with open(test_pl) as f:
+            used_variables = set()
+            for line in f:
+                # find all used variables in this test to put them into
+                # the `Template` argument of `setof`
+                for used_variable in re.findall(r"\b[A-Z]\w*", line):
+                    used_variables.add(used_variable)
         run_submission_cmd = cmd_template.render(
             submission_file=SUBMISSIONS_DIRECTORY / (submission_id + ".pl"),
             test_file=test_pl,
+            # optional file with initial data for all tests
+            shared_consult_data_file=test_pl.with_name("shared_consult_data.pl"),
+            variables_list="[" + ",".join(used_variables) + "]",
         )
-        output = os.popen(run_submission_cmd).read()
+        print(run_submission_cmd)
+        try:
+            process = subprocess.Popen(
+                run_submission_cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                shell=True,
+                start_new_session=True,
+            )
+            process.wait(timeout=EXECUTION_TIMEOUT_VALUE)
+            output = process.stdout.read().decode()
+        except subprocess.TimeoutExpired:
+            output = "Fatal Error: TL"
+            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+
         output_lines = parse_output(output)
         with open(test_ans) as f:
             correct_lines = [line.strip() for line in f]
@@ -36,6 +62,9 @@ def execute_on_tests(submission_id, task, cmd_template):
 
 def parse_output(output_lines):
     output_lines = output_lines.split("\n")
+    for line in output_lines:
+        if "fatal error" in line.lower():
+            return ["exception: " + line]
     first_query_idx = next(
         i for i in range(len(output_lines)) if output_lines[i].startswith("|")
     )
@@ -60,12 +89,14 @@ def get_task_tests(task):
 
 
 def get_test_verdict(output_lines, correct_lines, test_number):
+    if any("Fatal Error: TL" in line for line in output_lines):
+        return TestResult(test_number, "TL", output_lines, correct_lines)
+    if any("exception" in line for line in output_lines):
+        return TestResult(test_number, "RE", output_lines, correct_lines)
     if len(output_lines) != len(correct_lines):
         return TestResult(
             test_number, "WA: different number or lines", output_lines, correct_lines
         )
-    if any("exception" in line for line in output_lines):
-        return TestResult(test_number, "RE", output_lines, correct_lines)
     if set(output_lines) == set(correct_lines):
         return TestResult(test_number, "OK", output_lines, correct_lines)
     return TestResult(test_number, "WA: output mismatch", output_lines, correct_lines)

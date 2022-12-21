@@ -1,1 +1,1 @@
-cat {{ test_file }} | sed --expression='s/^\(.*\)\.$/bagof\(_,\1, _\)\./g' | gprolog --consult-file {{ submission_file }}
+cat {{ test_file }} | sed --expression='s/^\(.*\)\.$/setof\({{ variables_list }},\1, Result\)\./g' | gprolog --consult-file {{ shared_consult_data_file }} --consult-file {{ submission_file }}; exit 0

@@ -1,0 +1,1 @@
+parent(sasha, kolya).

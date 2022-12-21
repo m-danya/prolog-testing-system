@@ -98,8 +98,14 @@ Response:
 ```
 
 ## Development scripts
-For now one can use `api/submit.sh` and `api/execute.sh` scripts to send 
-requests like this:
+
+For now, one can use `api/submit_and_execute.sh` script to submit and execute
+a solution like this:
+```bash
+./submit_and_execute.sh task_5_1 examples/task_5_1.pl
+```
+
+Also, `api/submit.sh` and `api/execute.sh` scripts are available: 
 
 ```bash
 $ ./submit.sh path/to/my_program.pl
