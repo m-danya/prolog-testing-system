@@ -2,7 +2,7 @@
 
 **Work in progress.**
 
-Run server:
+Run the backend:
 ```bash
 sudo apt install gprolog python3-venv
 cd api
@@ -10,6 +10,15 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python api.py
+```
+
+Run the frontend:
+```bash
+# 0. install nodejs (version >= 16)
+# 1. run this:
+cd react-frontend
+npm install
+npm start
 ```
 
 ## API description

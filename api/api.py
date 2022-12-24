@@ -3,6 +3,7 @@ import traceback
 
 import werkzeug
 from flask import Flask
+from flask_cors import CORS, cross_origin
 from flask_restful import Api, Resource, reqparse
 from uuid import uuid4
 import jinja2
@@ -26,6 +27,7 @@ environment = jinja2.Environment(loader=loader)
 
 
 class Execute(Resource):
+    @cross_origin()
     def post(self):
         try:
             args = execute_parser.parse_args()
@@ -68,6 +70,7 @@ class Execute(Resource):
 
 
 class Submit(Resource):
+    @cross_origin()
     def post(self):
         try:
             args = submit_parser.parse_args()
@@ -113,6 +116,7 @@ api = Api()
 api.add_resource(Submit, "/submit")
 api.add_resource(Execute, "/execute")
 api.init_app(app)
+cors = CORS(app)
 
 
 def main(argv=None):
