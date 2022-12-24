@@ -1,4 +1,5 @@
 import argparse
+import os
 import traceback
 
 import werkzeug
@@ -8,6 +9,7 @@ from flask_restful import Api, Resource, reqparse
 from uuid import uuid4
 import jinja2
 
+from translator import translate
 from prolog_parsing import execute_on_tests
 from settings import *
 
@@ -48,17 +50,19 @@ class Execute(Resource):
                 }, 404
             if args.task is None:
                 return {"message": "You need to specify task", "status": 400}, 400
-            if args.type not in ["gprolog", "ХЛП"]:
+            if args.type not in ["gprolog", "HLP"]:
                 return {
                     "message": f"Argument type={args.type} is not valid",
                     "status": 400,
                 }, 400
             cmd_template = environment.get_template("test_prolog_program.j2")
 
+            translate(args.submission_id, args.type)
             execution_result = execute_on_tests(
                 args.submission_id, args.task, cmd_template
             )
 
+            os.remove(SUBMISSIONS_DIRECTORY / (args.submission_id + ".pl"))
             return {
                 "message": "Successfully executed",
                 "result": execution_result,

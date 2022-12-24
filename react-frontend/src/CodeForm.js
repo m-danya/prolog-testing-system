@@ -37,7 +37,7 @@ class CodeForm extends React.Component {
                   width="200px"
                 >
                   <MenuItem value="gprolog">Prolog</MenuItem>
-                  <MenuItem value="ХЛП">ХЛП</MenuItem>
+                  <MenuItem value="HLP">HLP</MenuItem>
                 </Select>
               </FormControl>
             </div>
