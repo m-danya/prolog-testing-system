@@ -2,6 +2,13 @@
 
 **Work in progress.**
 
+*Available [here](prolog-contest.ru).*
+
+Easy installation with docker compose:
+```bash
+docker-compose up --build -d
+```
+
 Run the backend:
 ```bash
 sudo apt install gprolog python3-venv

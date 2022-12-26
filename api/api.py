@@ -156,7 +156,7 @@ cors = CORS(app)
 
 def main(argv=None):
     host, port = parse_args(argv)
-    app.run(port=port, host=host, debug=True, use_reloader=False)
+    app.run(port=port, host=host, debug=False, use_reloader=False)
 
 
 if __name__ == "__main__":
