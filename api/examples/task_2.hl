@@ -1,2 +1,0 @@
-list_length(nil, 0)
-list_length(A.L, Length) <- list_length(L, Y), Length is Y + 1
