@@ -20,6 +20,7 @@ class TestResult:
 def execute_on_tests(submission_id, task, cmd_template):
     execution_result = []
     for test_number, test_pl, test_ans in get_task_tests(task):
+        test_consult_pl = test_pl.with_name("shared_consult_data.pl")
         with open(test_pl) as f:
             used_variables = set()
             for line in f:
@@ -31,7 +32,7 @@ def execute_on_tests(submission_id, task, cmd_template):
             submission_file=SUBMISSIONS_DIRECTORY / (submission_id + ".pl"),
             test_file=test_pl,
             # optional file with initial data for all tests
-            shared_consult_data_file=test_pl.with_name("shared_consult_data.pl"),
+            shared_consult_data_file=test_consult_pl,
             variables_list="[" + ",".join(used_variables) + "]",
         )
         try:
@@ -51,11 +52,18 @@ def execute_on_tests(submission_id, task, cmd_template):
         output_lines = parse_output(output)
         with open(test_ans) as f:
             correct_lines = [line.strip() for line in f]
-        execution_result.append(
-            dataclasses.asdict(  # because dataclass is not json serializable
-                get_test_verdict(output_lines, correct_lines, test_number)
-            )
+        test_verdict = dataclasses.asdict(
+            get_test_verdict(output_lines, correct_lines, test_number)
         )
+        # add additional info
+        with open(test_pl) as f:
+            test_verdict["test_text"] = f.read()
+        if test_consult_pl.exists():
+            with open(test_consult_pl) as f:
+                test_verdict["test_consult_text"] = f.read()
+        else:
+            test_verdict["test_consult_text"] = "—"
+        execution_result.append(test_verdict)
     return execution_result
 
 

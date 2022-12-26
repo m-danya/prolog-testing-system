@@ -5,6 +5,7 @@ import CodeForm from "./CodeForm";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import axios from "axios";
+import ExecutionResults from "./ExecutionResults";
 
 let BACKEND_ADDRESS = "http://127.0.0.1:3001";
 
@@ -20,6 +21,8 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
       language: "gprolog",
       selected_task_name: "",
       selected_task_description: "",
+      is_execution_results_opened: false,
+      execution_results_data: [],
     };
     this.sendSubmission = this.sendSubmission.bind(this);
     this.handleSubmissionTextChange = this.handleSubmissionTextChange.bind(this);
@@ -28,6 +31,7 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
     this.getTasksInfo = this.getTasksInfo.bind(this);
     this.handleSubmissionTextClear = this.handleSubmissionTextClear.bind(this);
     this.handleSubmissionTextUpdateFromFile = this.handleSubmissionTextUpdateFromFile.bind(this);
+    this.handleCloseResults = this.handleCloseResults.bind(this);
   }
 
   componentDidMount() {
@@ -63,6 +67,12 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
     this.setState({
       selected_task_name: event.target.value,
       selected_task_description: selected_task_description,
+    });
+  }
+
+  handleCloseResults() {
+    this.setState({
+      is_execution_results_opened: false,
     });
   }
 
@@ -109,7 +119,10 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
         },
         headers: { "Content-Type": "application/json" },
       }).then((execute_response) => {
-        alert(JSON.stringify(execute_response));
+        this.setState({
+          execution_results_data: execute_response.data.result,
+          is_execution_results_opened: true,
+        });
       });
     });
   }
@@ -118,6 +131,11 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
     return (
       <div>
         <Container maxWidth="xl">
+          <ExecutionResults
+            data={this.state.execution_results_data}
+            isOpened={this.state.is_execution_results_opened}
+            handleCloseResults={this.handleCloseResults}
+          />
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Header />
