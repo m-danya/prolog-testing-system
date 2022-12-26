@@ -24,6 +24,8 @@ execute_parser.add_argument("type", type=str)
 execute_parser.add_argument("task", type=str)
 execute_parser.add_argument("submission_id", type=str)
 
+tasks_info_parser = reqparse.RequestParser()
+
 loader = jinja2.FileSystemLoader(searchpath="./")
 environment = jinja2.Environment(loader=loader)
 
@@ -96,6 +98,34 @@ class Submit(Resource):
             return {"message": "Server error: %s" % e, "status": 500}, 500
 
 
+class TasksInfo(Resource):
+    @cross_origin()
+    def get(self):
+        try:
+            args = tasks_info_parser.parse_args()
+            task_names = []
+            task_descriptions = []
+            # the tasks list is sorted by their names
+            for task_dir in sorted(TESTS_DIRECTORY.glob("*")):
+                task_names.append(task_dir.name)
+                description_file = task_dir / "description.md"
+                if description_file.exists():
+                    with open(description_file) as f:
+                        task_descriptions.append(f.read())
+                else:
+                    task_descriptions.append(
+                        f"## {task_dir.name}\n\nNo description provided"
+                    )
+            return {
+                "task_names": task_names,
+                "task_descriptions": task_descriptions,
+                "status": 200,
+            }, 200
+        except Exception as e:
+            traceback.print_exc()
+            return {"message": "Server error: %s" % e, "status": 500}, 500
+
+
 def parse_args(argv):
     parser = argparse.ArgumentParser(prog="prolog-testing-system")
     parser.add_argument(
@@ -119,6 +149,7 @@ app = Flask(__name__)
 api = Api()
 api.add_resource(Submit, "/submit")
 api.add_resource(Execute, "/execute")
+api.add_resource(TasksInfo, "/tasks_info")
 api.init_app(app)
 cors = CORS(app)
 

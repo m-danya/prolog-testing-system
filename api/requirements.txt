@@ -2,5 +2,5 @@ Flask==2.2.2
 flask_cors==3.0.10
 flask_restful==0.3.9
 Jinja2==3.1.2
+regex==2022.10.31
 Werkzeug==2.2.2
-regex

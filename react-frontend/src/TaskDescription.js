@@ -11,20 +11,20 @@ class TaskDescription extends React.Component {
       <div>
         <FormControl fullWidth>
           <InputLabel id="task-label">Task</InputLabel>
-          <Select labelId="task-label" label="Task">
-            <MenuItem value="task1">task1</MenuItem>
-            <MenuItem value="task2">task2</MenuItem>
-            <MenuItem value="task3">task3</MenuItem>
+          <Select
+            labelId="task-label"
+            label="Task"
+            value={this.props.selected_task_name}
+            onChange={this.props.handleTaskNameChange}
+          >
+            {this.props.task_names.map((task_name) => (
+              <MenuItem value={task_name} key={task_name}>
+                {task_name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
-        <ReactMarkdown
-          children={`### Hello, world!
-        
-Here goes the task **description** that uses *markdown* syntax.
-- abc
-- xyz
-- blah blah`}
-        />
+        <ReactMarkdown children={this.props.selected_task_description} />
       </div>
     );
   }

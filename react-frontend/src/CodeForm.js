@@ -27,14 +27,14 @@ class CodeForm extends React.Component {
           <Grid item>
             <div style={{ width: "150px", maxWidth: "150px" }}>
               <FormControl fullWidth>
-                <InputLabel id="programming-language-label">
-                  Language
-                </InputLabel>
+                <InputLabel id="programming-language-label">Language</InputLabel>
                 <Select
                   labelId="programming-language-label"
                   label="Language"
                   defaultValue="gprolog"
                   width="200px"
+                  value={this.props.language}
+                  onChange={this.props.handleLanguageChange}
                 >
                   <MenuItem value="gprolog">Prolog</MenuItem>
                   <MenuItem value="HLP">HLP</MenuItem>
@@ -44,10 +44,23 @@ class CodeForm extends React.Component {
           </Grid>
           <Grid item xs style={{ textAlign: "right" }}>
             <Stack direction="row" spacing={2} justifyContent="flex-end">
-              <Button variant="outlined" startIcon={<FileUploadIcon />}>
-                Load from file
-              </Button>
-              <Button variant="outlined" startIcon={<ClearIcon />}>
+              <input
+                accept=".pl, .hlp, .txt"
+                style={{ display: "none" }}
+                id="raised-button-file"
+                type="file"
+                onChange={this.props.handleSubmissionTextUpdateFromFile}
+              />
+              <label htmlFor="raised-button-file">
+                <Button variant="outlined" component="span" startIcon={<FileUploadIcon />}>
+                  Load from file
+                </Button>
+              </label>
+              <Button
+                variant="outlined"
+                startIcon={<ClearIcon />}
+                onClick={this.props.handleSubmissionTextClear}
+              >
                 Clear
               </Button>
               <Button
@@ -74,9 +87,8 @@ class CodeForm extends React.Component {
               fontFamily: '"Lucida Console", Courier, monospace',
             },
           }}
-          defaultValue={`my_prefix(L, []).
-my_prefix([A|L], [A|[]]).
-my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`}
+          value={this.props.submission_text}
+          onChange={this.props.handleSubmissionTextChange}
         />
       </div>
     );

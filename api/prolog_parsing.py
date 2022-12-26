@@ -34,7 +34,6 @@ def execute_on_tests(submission_id, task, cmd_template):
             shared_consult_data_file=test_pl.with_name("shared_consult_data.pl"),
             variables_list="[" + ",".join(used_variables) + "]",
         )
-        print(run_submission_cmd)
         try:
             process = subprocess.Popen(
                 run_submission_cmd,
