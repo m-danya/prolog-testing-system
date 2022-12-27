@@ -4,5 +4,5 @@ COPY package.json /app/package.json
 RUN npm install --only=prod
 COPY . /app
 RUN npm run build
-EXPOSE 80
-CMD export PORT=80 && npm start
+EXPOSE 443
+CMD export PORT=443 && npm start

@@ -1,11 +1,12 @@
 FROM python:3.10-slim
 
+WORKDIR /app
+COPY . /app
+
 RUN apt update &&\
-    apt install gprolog python3-pip git -y
-RUN git clone https://github.com/m-danya/prolog-testing-system &&\
-    cd prolog-testing-system/api &&\
+    apt install gprolog python3-pip -y &&\
     pip install -r requirements.txt &&\
     pip install gunicorn uwsgi
 
 EXPOSE 3001
-CMD cd prolog-testing-system/api && mkdir submissions && gunicorn --bind 0.0.0.0:3001 wsgi:app run
+CMD gunicorn --bind 0.0.0.0:3001 --certfile=server.crt --keyfile=server.key wsgi:app run

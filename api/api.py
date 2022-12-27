@@ -145,6 +145,8 @@ def parse_args(argv):
     return args.host, args.port
 
 
+SUBMISSIONS_DIRECTORY.mkdir(exist_ok=True, parents=True)
+
 app = Flask(__name__)
 api = Api()
 api.add_resource(Submit, "/submit")
@@ -160,5 +162,4 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    SUBMISSIONS_DIRECTORY.mkdir(exist_ok=True, parents=True)
     main()

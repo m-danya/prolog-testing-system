@@ -7,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import axios from "axios";
 import ExecutionResults from "./ExecutionResults";
 
-let BACKEND_ADDRESS = "http://127.0.0.1:3001";
+let BACKEND_ADDRESS = process.env.REACT_APP_BACKEND_URL;
 
 class App extends React.Component {
   constructor(props) {

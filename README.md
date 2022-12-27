@@ -2,7 +2,7 @@
 
 **Work in progress.**
 
-*Available [here](prolog-contest.ru).*
+*Available [here](https://prolog-contest.ru).*
 
 Easy installation with docker compose:
 ```bash
