@@ -1,4 +1,5 @@
 import React from "react";
+import LoadingButton from "@mui/lab/LoadingButton";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
@@ -9,9 +10,12 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import CircularProgress from "@mui/material/CircularProgress";
+
+import "./style.css";
 
 class CodeForm extends React.Component {
   render() {
@@ -27,17 +31,17 @@ class CodeForm extends React.Component {
           <Grid item>
             <div style={{ width: "150px", maxWidth: "150px" }}>
               <FormControl fullWidth>
-                <InputLabel id="programming-language-label">Language</InputLabel>
+                <InputLabel id="programming-language-label">Язык</InputLabel>
                 <Select
                   labelId="programming-language-label"
-                  label="Language"
+                  label="Язык"
                   defaultValue="gprolog"
                   width="200px"
                   value={this.props.language}
                   onChange={this.props.handleLanguageChange}
                 >
                   <MenuItem value="gprolog">Prolog</MenuItem>
-                  <MenuItem value="HLP">HLP</MenuItem>
+                  <MenuItem value="HLP">ХЛП</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -53,7 +57,7 @@ class CodeForm extends React.Component {
               />
               <label htmlFor="raised-button-file">
                 <Button variant="outlined" component="span" startIcon={<FileUploadIcon />}>
-                  Load from file
+                  Из файла
                 </Button>
               </label>
               <Button
@@ -61,22 +65,23 @@ class CodeForm extends React.Component {
                 startIcon={<ClearIcon />}
                 onClick={this.props.handleSubmissionTextClear}
               >
-                Clear
+                Очистить
               </Button>
-              <Button
+              <LoadingButton
                 variant="contained"
                 endIcon={<SendIcon />}
                 onClick={this.props.sendSubmission}
+                loading={this.props.execution_is_loading}
+                loadingIndicator={<CircularProgress color="primary" size={18} />}
               >
-                Run on tests
-              </Button>
+                Протестировать
+              </LoadingButton>
             </Stack>
           </Grid>
         </Grid>
 
         <TextField
-          label="Your code"
-          // error
+          label="Ваш код"
           multiline
           minRows="15"
           fullWidth

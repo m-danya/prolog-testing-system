@@ -21,7 +21,7 @@ class Header extends React.Component {
               href="https://github.com/m-danya/prolog-testing-system"
               target="_blank"
             >
-              About
+              О проекте
             </Button>
           </Grid>
         </Grid>

@@ -23,6 +23,7 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
       selected_task_description: "",
       is_execution_results_opened: false,
       execution_results_data: [],
+      execution_is_loading: false,
     };
     this.sendSubmission = this.sendSubmission.bind(this);
     this.handleSubmissionTextChange = this.handleSubmissionTextChange.bind(this);
@@ -122,9 +123,11 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
         this.setState({
           execution_results_data: execute_response.data.result,
           is_execution_results_opened: true,
+          execution_is_loading: false,
         });
       });
     });
+    this.setState({ execution_is_loading: true });
   }
 
   render() {
@@ -140,7 +143,7 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
             <Grid item xs={12}>
               <Header />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <TaskDescription
                 task_names={this.state.task_names}
                 selected_task_name={this.state.selected_task_name}
@@ -148,7 +151,7 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
                 handleTaskNameChange={this.handleTaskNameChange}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <CodeForm
                 sendSubmission={this.sendSubmission}
                 submission_text={this.state.submission_text}
@@ -157,6 +160,7 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
                 handleLanguageChange={this.handleLanguageChange}
                 handleSubmissionTextClear={this.handleSubmissionTextClear}
                 handleSubmissionTextUpdateFromFile={this.handleSubmissionTextUpdateFromFile}
+                execution_is_loading={this.state.execution_is_loading}
               />
             </Grid>
           </Grid>

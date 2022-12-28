@@ -39,14 +39,14 @@ class ExecutionResults extends React.Component {
         maxWidth="lg"
       >
         <DialogTitle id="dialog-title" onClose={this.props.handleCloseResults}>
-          Your program has passed {this.props.data.filter((test) => test.result === "OK").length}/
-          {this.props.data.length} tests
+          Пройдено тестов: {this.props.data.filter((test) => test.result === "OK").length}/
+          {this.props.data.length}
         </DialogTitle>
         <DialogContent>
           {this.props.data.length && this.props.data[0].test_consult_text != "—" && (
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                This set of tests has following predefined predicates:
+                Для этой задачи по условию определены некоторые предикаты следующим образом:
               </Typography>
               {this.splitAndMapCode(this.props.data[0].test_consult_text)}
             </div>
@@ -55,10 +55,10 @@ class ExecutionResults extends React.Component {
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
-                <TableCell>Result</TableCell>
-                <TableCell>Test text</TableCell>
-                <TableCell>Program output</TableCell>
-                <TableCell>Correct output</TableCell>
+                <TableCell>Результат</TableCell>
+                <TableCell>Содержание теста</TableCell>
+                <TableCell>Вывод программы</TableCell>
+                <TableCell>Корректный вывод</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -83,7 +83,7 @@ class ExecutionResults extends React.Component {
         </DialogContent>
         <DialogActions>
           <Button onClick={this.props.handleCloseResults} color="primary">
-            Close
+            Закрыть
           </Button>
         </DialogActions>
       </Dialog>

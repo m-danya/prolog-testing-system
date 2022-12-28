@@ -10,10 +10,10 @@ class TaskDescription extends React.Component {
     return (
       <div>
         <FormControl fullWidth>
-          <InputLabel id="task-label">Task</InputLabel>
+          <InputLabel id="task-label">Задача</InputLabel>
           <Select
             labelId="task-label"
-            label="Task"
+            label="Задача"
             value={this.props.selected_task_name}
             onChange={this.props.handleTaskNameChange}
           >

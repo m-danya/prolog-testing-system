@@ -152,6 +152,7 @@ api = Api()
 api.add_resource(Submit, "/submit")
 api.add_resource(Execute, "/execute")
 api.add_resource(TasksInfo, "/tasks_info")
+app.config["MAX_CONTENT_LENGTH"] = 42 * 1024  # 42 Kb content size limit
 api.init_app(app)
 cors = CORS(app)
 
