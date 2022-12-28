@@ -1,0 +1,1 @@
+reach([a,b,c,d],[[a,b],[b,c],[c,a],[b,d]], a, d).
