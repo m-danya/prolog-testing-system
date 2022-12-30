@@ -8,5 +8,5 @@ RUN apt update &&\
     pip install -r requirements.txt &&\
     pip install gunicorn uwsgi
 
-EXPOSE 3001
-CMD gunicorn --bind 0.0.0.0:3001 --certfile=server.crt --keyfile=server.key wsgi:app run
+EXPOSE ${BACKEND_PORT}
+CMD gunicorn --bind 0.0.0.0:${BACKEND_PORT} --certfile=${SSL_CRT_FILE} --keyfile=${SSL_KEY_FILE} wsgi:app run

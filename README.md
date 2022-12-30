@@ -76,19 +76,18 @@ yes
 ## Development notes (ENG)
 
 ### Runing a setup with Docker (recommended)
-Run frontend+backend with a single command:
+Run frontend+backend with Docker:
 ```bash
+
+# just filling in .env file, you can do it manually with any text editor
+echo 'REACT_APP_BACKEND_URL=http://127.0.0.1:3001
+BACKEND_PORT=3001
+FRONTEND_PORT=8080
+' > .env
+
 docker-compose up --build -d
 ```
-Then open `localhost:3000` in your browser.
-
-P.S. To make things happen, one should remove `--certfile=server.crt
---keyfile=server.key` from the `api/Dockerfile` and create a
-file `react-frontend/.env` with a following content:
-```
-REACT_APP_BACKEND_URL='http://127.0.0.1:3001'
-```
-
+Then open `localhost:8080` in your browser.
 
 ### Running a setup without Docker
 

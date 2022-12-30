@@ -4,8 +4,12 @@ services:
   api:
     build: api/
     network_mode: host
+    environment:
+      - BACKEND_PORT=${BACKEND_PORT}
+      - SSL_CRT_FILE=${SSL_CRT_FILE}
+      - SSL_KEY_FILE=${SSL_KEY_FILE}
     read_only: true
-    tmpfs: 
+    tmpfs:
     - /app/submissions
     - /tmp
 
@@ -13,7 +17,12 @@ services:
     build: react-frontend/
     network_mode: host
     environment:
-    - DISABLE_ESLINT_PLUGIN=true
+      - HTTPS=${HTTPS}
+      - SSL_CRT_FILE=${SSL_CRT_FILE}
+      - SSL_KEY_FILE=${SSL_KEY_FILE}
+      - FRONTEND_PORT=${FRONTEND_PORT}
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+      - DISABLE_ESLINT_PLUGIN=true
     read_only: true
     tmpfs:
     - /tmp

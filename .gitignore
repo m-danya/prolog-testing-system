@@ -3,3 +3,4 @@ api/submissions
 venv
 api/__pycache__
 react-frontend/package-lock.json
+.env
