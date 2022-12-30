@@ -25,14 +25,14 @@ def list_translate(s):
 
 def horn_to_prolog(clause):
     vars_or_lists = []
-    clause = replace_spec_symbols(clause).replace(" ", "")
+    clause = replace_spec_symbols(clause)
     parenthesis = regex.findall("\((?:[^()]++|(?R))*+\)", clause)
     for par in parenthesis:
         vars_or_lists.extend(regex.split(",", par[1:-1]))
     vars_or_lists = [var for var in vars_or_lists if len(var) > 0]
     for var in vars_or_lists:
         if "nil" in var or "." in var:
-            clause = clause.replace(var, list_translate(var), 1)
+            clause = clause.replace(var, list_translate(var.replace(" ", "")), 1)
     return clause
 
 
