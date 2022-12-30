@@ -4,6 +4,10 @@ services:
   api:
     build: api/
     network_mode: host
+    read_only: true
+    tmpfs: 
+    - /app/submissions
+    - /tmp
 
   react-frontend:
     build: react-frontend/
