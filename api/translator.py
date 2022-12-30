@@ -25,7 +25,7 @@ def list_translate(s):
 
 def horn_to_prolog(clause):
     vars_or_lists = []
-    clause = replace_spec_symbols(clause)
+    clause = replace_spec_symbols(clause).replace(" ", "")
     parenthesis = regex.findall("\((?:[^()]++|(?R))*+\)", clause)
     for par in parenthesis:
         vars_or_lists.extend(regex.split(",", par[1:-1]))
