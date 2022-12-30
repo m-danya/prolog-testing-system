@@ -1,0 +1,1 @@
+max_occur(["a", "ab", "abc", "abcd"], L).
