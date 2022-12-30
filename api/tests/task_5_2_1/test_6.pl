@@ -1,1 +1,1 @@
-list(foo).
+my_list(foo).

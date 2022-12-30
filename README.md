@@ -59,6 +59,7 @@ yes
 2. Проверьте, что написанная вами программа **синтаксически корректна** для выбранного языка (Prolog/ХЛП)
 3. Продолжайте ботать матлог
 4. Отдохните 10 минут и попробуйте снова
+5. Если сайт лежит, или не подгружается список задач, [пишите](https://t.me/m_danya_jpg)
 
 ### Содействие развитию проекта (contributing)
 
@@ -103,7 +104,7 @@ Run the frontend:
 # 1. run this:
 cd react-frontend
 npm install
-REACT_APP_BACKEND_URL=https://localhost:3001 npm start
+REACT_APP_BACKEND_URL=http://localhost:3001 npm start
 ```
 
 ### API description

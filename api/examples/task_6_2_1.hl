@@ -1,2 +1,2 @@
-my_length(nil, 0)
-my_length(A.L, Length) <- my_length(L, Y), Length is Y + 1
+my_length(nil, 0);
+my_length(A.L, Length) <- my_length(L, Y), Length is Y + 1;
