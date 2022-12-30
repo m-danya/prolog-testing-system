@@ -1,1 +1,1 @@
-my_reverse([], R).
+my_reverse(R, []).
