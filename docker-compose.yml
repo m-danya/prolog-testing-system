@@ -12,3 +12,7 @@ services:
   react-frontend:
     build: react-frontend/
     network_mode: host
+    read_only: true
+    tmpfs:
+    - /tmp
+    - /app/node_modules/.cache
