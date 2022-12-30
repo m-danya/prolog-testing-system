@@ -1,10 +1,10 @@
-FROM python:3.10-slim
+FROM python:3
 
 WORKDIR /app
 COPY . /app
 
 RUN apt update &&\
-    apt install gprolog python3-pip -y &&\
+    apt install gprolog -y &&\
     pip install -r requirements.txt &&\
     pip install gunicorn uwsgi
 

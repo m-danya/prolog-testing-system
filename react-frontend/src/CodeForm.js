@@ -35,13 +35,12 @@ class CodeForm extends React.Component {
                 <Select
                   labelId="programming-language-label"
                   label="Язык"
-                  defaultValue="gprolog"
                   width="200px"
                   value={this.props.language}
                   onChange={this.props.handleLanguageChange}
                 >
-                  <MenuItem value="gprolog">Prolog</MenuItem>
                   <MenuItem value="HLP">ХЛП</MenuItem>
+                  <MenuItem value="gprolog">Prolog</MenuItem>
                 </Select>
               </FormControl>
             </div>
