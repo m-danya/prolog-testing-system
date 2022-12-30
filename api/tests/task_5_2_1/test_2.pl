@@ -1,1 +1,1 @@
-list([a|X]).
+my_list([a,X]).
