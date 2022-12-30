@@ -12,7 +12,8 @@ services:
   react-frontend:
     build: react-frontend/
     network_mode: host
+    environment:
+    - DISABLE_ESLINT_PLUGIN=true
     read_only: true
     tmpfs:
     - /tmp
-    - /app/node_modules/.cache
