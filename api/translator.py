@@ -32,7 +32,7 @@ def horn_to_prolog(clause):
     vars_or_lists = [var for var in vars_or_lists if len(var) > 0]
     for var in vars_or_lists:
         if "nil" in var or "." in var:
-            clause = clause.replace(var, list_translate(var))
+            clause = clause.replace(var, list_translate(var), 1)
     return clause
 
 
