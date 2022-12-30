@@ -7,7 +7,13 @@ import Grid from "@mui/material/Grid";
 import axios from "axios";
 import ExecutionResults from "./ExecutionResults";
 
-let BACKEND_ADDRESS = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_ADDRESS = process.env.REACT_APP_BACKEND_URL;
+const HLP_DEFAULT_CODE = `my_prefix(L, nil);
+my_prefix(A.L, A.nil);
+my_prefix(A.L1, A.L2) <- my_prefix(L1, L2);`;
+const PROLOG_DEFAULT_CODE = `my_prefix(L, []).
+my_prefix([A|L], [A|[]]).
+my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`;
 
 class App extends React.Component {
   constructor(props) {
@@ -15,10 +21,8 @@ class App extends React.Component {
     this.state = {
       task_names: [],
       task_descriptions: [],
-      submission_text: `my_prefix(L, []).
-my_prefix([A|L], [A|[]]).
-my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
-      language: "gprolog",
+      submission_text: HLP_DEFAULT_CODE,
+      language: "HLP",
       selected_task_name: "",
       selected_task_description: "",
       is_execution_results_opened: false,
@@ -59,7 +63,14 @@ my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`,
   }
 
   handleLanguageChange(event) {
-    this.setState({ language: event.target.value });
+    let new_language = event.target.value;
+    let new_submission_text = this.state.submission_text;
+    if (this.state.submission_text === HLP_DEFAULT_CODE && new_language === "gprolog") {
+      new_submission_text = PROLOG_DEFAULT_CODE;
+    } else if (this.state.submission_text === PROLOG_DEFAULT_CODE && new_language === "HLP") {
+      new_submission_text = HLP_DEFAULT_CODE;
+    }
+    this.setState({ language: new_language, submission_text: new_submission_text });
   }
 
   handleTaskNameChange(event) {

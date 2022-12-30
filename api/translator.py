@@ -38,13 +38,7 @@ def horn_to_prolog(clause):
 
 def replace_spec_symbols(clause, type="HLP"):
     if type == "HLP":
-        clause = (
-            clause.replace("<-", ":-")
-            .replace(";", ".")
-            .replace("?", "?-")
-            .replace("\n", "")
-            + "."
-        )
+        clause = clause.replace("<-", ":-").replace(";", ".").replace("?", "?-")
     return clause
 
 
@@ -52,7 +46,8 @@ def translate(submission_id, type="HLP"):
     if type == "HLP":
         filename = SUBMISSIONS_DIRECTORY / (submission_id + ".pl")
         with open(filename, "r+") as horn_file:
-            lines = horn_file.readlines()
+            content = horn_file.read()
+            lines = regex.findall("[\w\W]+?;", content)
         with open(filename, "w+") as horn_file:
             for clause in lines:
                 print(horn_to_prolog(clause), file=horn_file)

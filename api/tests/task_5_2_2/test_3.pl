@@ -1,1 +1,1 @@
-elem(X, [a,b,c]).
+my_elem(X, [a,b,c]).
