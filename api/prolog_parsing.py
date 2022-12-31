@@ -3,6 +3,7 @@ import os
 import re
 import signal
 import subprocess
+import importlib
 
 from settings import *
 from dataclasses import dataclass
@@ -101,12 +102,37 @@ def get_task_tests(task):
 
 def perform_test(output, test_ans, test_number):
     output_lines = parse_output(output)
+    
+    ext = os.path.splitext(test_ans)[-1].lower()
+    if ext == '.ans':
+        return test_result_equal(output_lines, test_ans, test_number)
+    elif ext == '.py':
+        return test_with_script(output_lines, test_ans, test_number)
+
+    return TestResult(
+        test_number,
+        "IE: Incorrect test configuration, contact system admin.", 
+        output_lines, 
+        '')
+
+
+def test_with_script(output_lines, test_ans, test_number):
+    test_ans = os.path.splitext(test_ans)[0]
+    test_ans = test_ans.replace('/', '.')
+    test_module = importlib.import_module(str(test_ans))
+    importlib.reload(test_module) # To load changes in tests during server running
+    func = getattr(test_module, 'test_result')
+    return dataclasses.asdict(TestResult(*test_module.test_result(output_lines, test_number)))
+
+
+def test_result_equal(output_lines, test_ans, test_number):
     with open(test_ans) as f:
         correct_lines = [line.strip() for line in f]
     test_verdict = dataclasses.asdict(
         get_test_verdict(output_lines, correct_lines, test_number)
     )
     return test_verdict
+
 
 def get_test_verdict(output_lines, correct_lines, test_number):
     if any("Fatal Error: TL" in line for line in output_lines):
