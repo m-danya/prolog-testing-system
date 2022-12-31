@@ -1,6 +1,6 @@
 api/submissions
 .idea
 venv
-api/__pycache__
+**/__pycache__
 react-frontend/package-lock.json
 .env
