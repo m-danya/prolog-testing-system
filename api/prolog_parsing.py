@@ -83,11 +83,20 @@ def parse_output(output_lines):
 
 
 def get_task_tests(task):
+    valid_exts = ['.ans', '.py']
     tests = []
     for test_pl in (TESTS_DIRECTORY / task).glob("test*.pl"):
         test_number = int(test_pl.name.replace("test_", "").replace(".pl", ""))
+        
         test_ans = test_pl.with_name(test_pl.name[: -(len(".pl"))] + ".ans")
-        tests.append((test_number, test_pl, test_ans))
+        test_py = test_pl.with_name(test_pl.name[: -(len(".pl"))] + ".py")
+
+        test_basename = test_pl.name[: -(len(".pl"))]
+        for ext in valid_exts:
+            test_ans = test_pl.with_name(test_basename + ext)
+            if os.path.exists(test_ans):
+                tests.append((test_number, test_pl, test_ans))
+                break
     return sorted(tests)  # sorted by test_number (int)
 
 def perform_test(output, test_ans, test_number):
