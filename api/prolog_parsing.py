@@ -48,13 +48,9 @@ def execute_on_tests(submission_id, task, cmd_template):
         except subprocess.TimeoutExpired:
             output = "Fatal Error: TL"
             os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+        
+        test_verdict = perform_test(output, test_ans, test_number)
 
-        output_lines = parse_output(output)
-        with open(test_ans) as f:
-            correct_lines = [line.strip() for line in f]
-        test_verdict = dataclasses.asdict(
-            get_test_verdict(output_lines, correct_lines, test_number)
-        )
         # add additional info
         with open(test_pl) as f:
             test_verdict["test_text"] = f.read()
@@ -94,6 +90,14 @@ def get_task_tests(task):
         tests.append((test_number, test_pl, test_ans))
     return sorted(tests)  # sorted by test_number (int)
 
+def perform_test(output, test_ans, test_number):
+    output_lines = parse_output(output)
+    with open(test_ans) as f:
+        correct_lines = [line.strip() for line in f]
+    test_verdict = dataclasses.asdict(
+        get_test_verdict(output_lines, correct_lines, test_number)
+    )
+    return test_verdict
 
 def get_test_verdict(output_lines, correct_lines, test_number):
     if any("Fatal Error: TL" in line for line in output_lines):
