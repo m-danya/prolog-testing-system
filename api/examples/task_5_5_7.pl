@@ -1,3 +1,2 @@
-my_concat([A|X], [A|Y], Z) :- my_concat(X, Y, Z).
-my_concat([A|X], [], [A|Z]) :- my_concat(X, [], Z).
-my_concat([], [], []).
+my_concat(L, [], L).
+my_concat([X | Z], [X | L], R) :- my_concat(Z, L, R).

@@ -1,11 +1,21 @@
-make_ordered(L1, L2) :-
-    my_sort(L1, L2).
+make_ordered(X, Y) :- 
+    my_permutation(X, Y),
+    is_sorted(Y).
 
-my_sort([], []).
-my_sort([X|Xs], Sorted) :-
-    my_sort(Xs, SortedTail),
-    insert(X, SortedTail, Sorted).
+is_sorted([]).
+is_sorted([_]).
+is_sorted([X, Y | Tail]) :-
+    X =< Y, 
+    is_sorted([Y | Tail]).
 
-insert(X, [Y|Ys], [Y|Zs]) :- X > Y, insert(X, Ys, Zs).
-insert(X, [Y|Ys], [X,Y|Ys]) :- X =< Y.
-insert(X, [], [X]).
+my_permutation([], []).
+my_permutation([H | T], S) :-
+    my_permutation(T, P),
+    my_concat(X, Y, P),
+    my_concat(X, [H | Y], S).
+
+my_list([]).
+my_list([_ | Tail]) :- my_list(Tail).
+
+my_concat([], L, L).
+my_concat([X | Z], R, [X | L]) :- my_concat(Z, R, L).
