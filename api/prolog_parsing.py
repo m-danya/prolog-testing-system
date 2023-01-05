@@ -123,7 +123,7 @@ def test_with_script(output_lines, test_ans, test_number):
     test_ans = str(test_ans)
 
     test_dir = '/'.join(test_ans.split('.')[:-1])
-    test_ans = test_ans.split('.')[-1]
+    #test_ans = test_ans.split('.')[-1]
 
     sys.path.append(test_dir)
 
