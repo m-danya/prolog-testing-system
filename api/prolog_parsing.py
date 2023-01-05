@@ -4,6 +4,7 @@ import re
 import signal
 import subprocess
 import importlib
+import sys
 
 from settings import *
 from dataclasses import dataclass
@@ -119,10 +120,19 @@ def perform_test(output, test_ans, test_number):
 def test_with_script(output_lines, test_ans, test_number):
     test_ans = os.path.splitext(test_ans)[0]
     test_ans = test_ans.replace('/', '.')
-    test_module = importlib.import_module(str(test_ans))
+    test_ans = str(test_ans)
+
+    test_dir = '/'.join(test_ans.split('.')[:-1])
+    test_ans = test_ans.split('.')[-1]
+
+    sys.path.append(test_dir)
+
+    test_module = importlib.import_module(test_ans)
     importlib.reload(test_module) # To load changes in tests during server running
     func = getattr(test_module, 'test_result')
-    return dataclasses.asdict(TestResult(*test_module.test_result(output_lines, test_number)))
+    result = dataclasses.asdict(TestResult(*test_module.test_result(output_lines, test_number)))
+    sys.path.remove(test_dir)
+    return result
 
 
 def test_result_equal(output_lines, test_ans, test_number):
