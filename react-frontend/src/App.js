@@ -1,11 +1,16 @@
 import React from "react";
+
+import axios from "axios";
+
+import Container from "@mui/material/Container";
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from "@mui/material/Grid";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import CodeForm from "./CodeForm";
+import ExecutionResults from "./ExecutionResults";
 import Header from "./Header";
 import TaskDescription from "./TaskDescription";
-import CodeForm from "./CodeForm";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import axios from "axios";
-import ExecutionResults from "./ExecutionResults";
 
 const BACKEND_ADDRESS = process.env.REACT_APP_BACKEND_URL;
 const HLP_DEFAULT_CODE = `my_prefix(L, nil);
@@ -14,6 +19,18 @@ my_prefix(A.L1, A.L2) <- my_prefix(L1, L2);`;
 const PROLOG_DEFAULT_CODE = `my_prefix(L, []).
 my_prefix([A|L], [A|[]]).
 my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`;
+
+const lightTheme = createTheme({
+  palette: {
+      mode: 'light',
+  },
+});
+
+const darkTheme = createTheme({
+  palette: {
+      mode: 'dark',
+  },
+});
 
 class App extends React.Component {
   constructor(props) {
@@ -28,6 +45,7 @@ class App extends React.Component {
       is_execution_results_opened: false,
       execution_results_data: [],
       execution_is_loading: false,
+      selectedTheme: lightTheme,
     };
     this.sendSubmission = this.sendSubmission.bind(this);
     this.handleSubmissionTextChange = this.handleSubmissionTextChange.bind(this);
@@ -37,6 +55,7 @@ class App extends React.Component {
     this.handleSubmissionTextClear = this.handleSubmissionTextClear.bind(this);
     this.handleSubmissionTextUpdateFromFile = this.handleSubmissionTextUpdateFromFile.bind(this);
     this.handleCloseResults = this.handleCloseResults.bind(this);
+    this.handleThemeChange = this.handleThemeChange.bind(this);
   }
 
   componentDidMount() {
@@ -47,7 +66,7 @@ class App extends React.Component {
     this.setState({ submission_text: event.target.value });
   }
 
-  handleSubmissionTextClear(event) {
+  handleSubmissionTextClear(_) {
     this.setState({ submission_text: "" });
   }
 
@@ -71,6 +90,12 @@ class App extends React.Component {
       new_submission_text = HLP_DEFAULT_CODE;
     }
     this.setState({ language: new_language, submission_text: new_submission_text });
+  }
+
+  handleThemeChange(_) {
+    this.setState((prevState, _) => {
+        return { selectedTheme: prevState.selectedTheme === darkTheme ? lightTheme : darkTheme };
+    })
   }
 
   handleTaskNameChange(event) {
@@ -143,7 +168,8 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <ThemeProvider theme={this.state.selectedTheme}>
+        <CssBaseline/>
         <Container maxWidth="xl">
           <ExecutionResults
             data={this.state.execution_results_data}
@@ -152,7 +178,9 @@ class App extends React.Component {
           />
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Header />
+              <Header
+                switchTheme={ this.handleThemeChange }
+              />
             </Grid>
             <Grid item xs={12} lg={6}>
               <TaskDescription
@@ -176,7 +204,7 @@ class App extends React.Component {
             </Grid>
           </Grid>
         </Container>
-      </div>
+      </ThemeProvider>
     );
   }
 }
