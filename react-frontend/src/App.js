@@ -66,7 +66,7 @@ class App extends React.Component {
     this.setState({ submission_text: event.target.value });
   }
 
-  handleSubmissionTextClear(event) {
+  handleSubmissionTextClear(_) {
     this.setState({ submission_text: "" });
   }
 
@@ -92,16 +92,10 @@ class App extends React.Component {
     this.setState({ language: new_language, submission_text: new_submission_text });
   }
 
-  handleThemeChange(event) {
-    let newTheme = event.target.value;
-    if (newTheme === "darkTheme") {
-      this.setState({ selectedTheme: darkTheme });
-    } else if (newTheme === "lightTheme"){
-      this.setState({ selectedTheme: lightTheme });
-    } else {
-      // in case of wrong theme name setting to default
-      this.setState({ selectedTheme: lightTheme });
-    }
+  handleThemeChange(_) {
+    this.setState((prevState, _) => {
+        return { selectedTheme: prevState.selectedTheme === darkTheme ? lightTheme : darkTheme };
+    })
   }
 
   handleTaskNameChange(event) {
@@ -172,55 +166,44 @@ class App extends React.Component {
     this.setState({ execution_is_loading: true });
   }
 
-  getSelectedThemeName() {
-      if (this.state.selectedTheme === lightTheme) {
-        return "lightTheme";
-      } else if (this.state.selectedTheme === darkTheme){
-        return "darkTheme";
-      }
-  };
-
   render() {
     return (
-        <ThemeProvider theme={this.state.selectedTheme}>
-          <CssBaseline/>
-          <div>
-          <Container maxWidth="xl">
-            <ExecutionResults
-              data={this.state.execution_results_data}
-              isOpened={this.state.is_execution_results_opened}
-              handleCloseResults={this.handleCloseResults}
-            />
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Header
-                  selectedThemeName={ this.getSelectedThemeName() }
-                  setSelectedTheme={ this.handleThemeChange }
-                />
-              </Grid>
-              <Grid item xs={12} lg={6}>
-                <TaskDescription
-                  task_names={this.state.task_names}
-                  selected_task_name={this.state.selected_task_name}
-                  selected_task_description={this.state.selected_task_description}
-                  handleTaskNameChange={this.handleTaskNameChange}
-                />
-              </Grid>
-              <Grid item xs={12} lg={6}>
-                <CodeForm
-                  sendSubmission={this.sendSubmission}
-                  submission_text={this.state.submission_text}
-                  handleSubmissionTextChange={this.handleSubmissionTextChange}
-                  language={this.state.language}
-                  handleLanguageChange={this.handleLanguageChange}
-                  handleSubmissionTextClear={this.handleSubmissionTextClear}
-                  handleSubmissionTextUpdateFromFile={this.handleSubmissionTextUpdateFromFile}
-                  execution_is_loading={this.state.execution_is_loading}
-                />
-              </Grid>
+      <ThemeProvider theme={this.state.selectedTheme}>
+        <CssBaseline/>
+        <Container maxWidth="xl">
+          <ExecutionResults
+            data={this.state.execution_results_data}
+            isOpened={this.state.is_execution_results_opened}
+            handleCloseResults={this.handleCloseResults}
+          />
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Header
+                switchTheme={ this.handleThemeChange }
+              />
             </Grid>
-          </Container>
-        </div>
+            <Grid item xs={12} lg={6}>
+              <TaskDescription
+                task_names={this.state.task_names}
+                selected_task_name={this.state.selected_task_name}
+                selected_task_description={this.state.selected_task_description}
+                handleTaskNameChange={this.handleTaskNameChange}
+              />
+            </Grid>
+            <Grid item xs={12} lg={6}>
+              <CodeForm
+                sendSubmission={this.sendSubmission}
+                submission_text={this.state.submission_text}
+                handleSubmissionTextChange={this.handleSubmissionTextChange}
+                language={this.state.language}
+                handleLanguageChange={this.handleLanguageChange}
+                handleSubmissionTextClear={this.handleSubmissionTextClear}
+                handleSubmissionTextUpdateFromFile={this.handleSubmissionTextUpdateFromFile}
+                execution_is_loading={this.state.execution_is_loading}
+              />
+            </Grid>
+          </Grid>
+        </Container>
       </ThemeProvider>
     );
   }
