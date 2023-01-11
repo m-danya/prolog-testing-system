@@ -71,11 +71,13 @@ yes
 1. Пожалуйста не используйте заглавные буквы в строках. Они могут быть интерпретированы как переменные.
 2. Пожалуйста не используйте пробелы в тестовых строках (временно). Программы на ХЛП могут работать на них некорректно.
 
+При написании кода на Python используйте [black](https://pypi.org/project/black/).
+
 Если что-то непонятно, пишите [сюда](https://t.me/m_danya_jpg) или [сюда](https://t.me/Sadimer).
 
 ## Development notes (ENG)
 
-### Runing a setup with Docker (recommended)
+### Running a setup with Docker (recommended)
 Run frontend+backend with Docker:
 ```bash
 

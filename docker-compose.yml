@@ -26,3 +26,4 @@ services:
     read_only: true
     tmpfs:
     - /tmp
+    - /root/.npm
