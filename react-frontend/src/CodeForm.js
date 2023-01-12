@@ -21,8 +21,7 @@ class CodeForm extends React.Component {
   render() {
     return (
       <div>
-        <Grid
-          container
+        <Grid container
           spacing={2}
           alignItems="center"
           justifyContent="space-between"
@@ -46,7 +45,7 @@ class CodeForm extends React.Component {
             </div>
           </Grid>
           <Grid item xs style={{ textAlign: "right" }}>
-            <Stack direction="row" spacing={2} justifyContent="flex-end">
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1, sm: 1, md: 2 }} justifyContent="flex-end">
               <input
                 accept=".pl, .hlp, .txt"
                 style={{ display: "none" }}
@@ -54,11 +53,9 @@ class CodeForm extends React.Component {
                 type="file"
                 onChange={this.props.handleSubmissionTextUpdateFromFile}
               />
-              <label htmlFor="raised-button-file">
-                <Button variant="outlined" component="span" startIcon={<FileUploadIcon />}>
+              <Button htmlFor="raised-button-file" variant="outlined" startIcon={<FileUploadIcon />}>
                   Из файла
                 </Button>
-              </label>
               <Button
                 variant="outlined"
                 startIcon={<ClearIcon />}
