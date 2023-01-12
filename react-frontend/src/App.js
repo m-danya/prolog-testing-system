@@ -11,6 +11,7 @@ import CodeForm from "./CodeForm";
 import ExecutionResults from "./ExecutionResults";
 import Header from "./Header";
 import TaskDescription from "./TaskDescription";
+import { lightTheme, darkTheme } from "./Themes.js"
 
 const BACKEND_ADDRESS = process.env.REACT_APP_BACKEND_URL;
 const HLP_DEFAULT_CODE = `my_prefix(L, nil);
@@ -19,18 +20,6 @@ my_prefix(A.L1, A.L2) <- my_prefix(L1, L2);`;
 const PROLOG_DEFAULT_CODE = `my_prefix(L, []).
 my_prefix([A|L], [A|[]]).
 my_prefix([A|L1], [A|L2]) :- my_prefix(L1, L2).`;
-
-const lightTheme = createTheme({
-  palette: {
-      mode: 'light',
-  },
-});
-
-const darkTheme = createTheme({
-  palette: {
-      mode: 'dark',
-  },
-});
 
 class App extends React.Component {
   constructor(props) {
