@@ -92,7 +92,7 @@ def get_task_tests(task):
         test_basename = test_pl.name[: -(len(".pl"))]
         for ext in TEST_EXTS:
             test_ans = test_pl.with_name(test_basename + ext)
-            if os.path.exists(test_ans):
+            if test_ans.exists():
                 tests.append((test_number, test_pl, test_ans))
                 break
     return sorted(tests)  # sorted by test_number (int)
@@ -100,7 +100,7 @@ def get_task_tests(task):
 def perform_test(output, test_ans, test_number):
     output_lines = parse_output(output)
     
-    ext = os.path.splitext(test_ans)[-1].lower()
+    ext = test_ans.suffix.lower()
     if ext == '.ans':
         return test_result_equal(output_lines, test_ans, test_number)
     elif ext == '.py':
@@ -114,11 +114,9 @@ def perform_test(output, test_ans, test_number):
 
 
 def test_with_script(output_lines, test_ans, test_number):
-    test_ans = os.path.splitext(test_ans)[0]
-    test_ans = test_ans.replace('/', '.')
-    test_ans = str(test_ans)
+    test_ans_module = str(test_ans.stem).replace('/', '.')
 
-    test_dir = '/'.join(test_ans.split('.')[:-1])
+    test_dir = test_ans.parent
 
     sys.path.append(test_dir)
 
