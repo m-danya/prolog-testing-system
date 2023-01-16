@@ -3,4 +3,4 @@ from pathlib import Path
 SUBMISSIONS_DIRECTORY = Path("submissions")
 TESTS_DIRECTORY = Path("tests")
 EXECUTION_TIMEOUT_VALUE = 2
-TEST_EXTS = ['.ans', '.py']
+TEST_EXTS = [".ans", ".py"]
