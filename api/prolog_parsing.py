@@ -118,18 +118,19 @@ def perform_test(output, test_ans, test_number):
 def test_with_script(output_lines, test_ans, test_number):
     test_ans_module = str(test_ans.stem).replace("/", ".")
 
-    test_dir = test_ans.parent
+    test_dir = str(test_ans.parent)
 
-    sys.path.append(test_dir)
+    try:
+        sys.path.append(test_dir)
 
-    test_module = importlib.import_module(test_ans)
-    importlib.reload(test_module)  # To load changes in tests during server running
-    func = getattr(test_module, "test_result")
-    result = dataclasses.asdict(
-        TestResult(*test_module.test_result(output_lines, test_number))
-    )
-    sys.path.remove(test_dir)
-    return result
+        test_module = importlib.import_module(test_ans_module)
+        importlib.reload(test_module)  # To load changes in tests during server running
+        func = getattr(test_module, "test_result")
+        return dataclasses.asdict(
+            TestResult(*test_module.test_result(output_lines, test_number))
+        )
+    finally:
+        sys.path.remove(test_dir)
 
 
 def test_result_equal(output_lines, test_ans, test_number):
