@@ -111,7 +111,7 @@ def perform_test(output, test_ans, test_number):
         test_number,
         "IE: Incorrect test configuration, contact system admin.",
         output_lines,
-        "",
+        [],
     )
 
 
