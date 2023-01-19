@@ -3,6 +3,8 @@ import os
 import re
 import signal
 import subprocess
+import importlib
+import sys
 
 from settings import *
 from dataclasses import dataclass
@@ -48,13 +50,9 @@ def execute_on_tests(submission_id, task, cmd_template):
         except subprocess.TimeoutExpired:
             output = "Fatal Error: TL"
             os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+        
+        test_verdict = perform_test(output, test_ans, test_number)
 
-        output_lines = parse_output(output)
-        with open(test_ans) as f:
-            correct_lines = [line.strip() for line in f]
-        test_verdict = dataclasses.asdict(
-            get_test_verdict(output_lines, correct_lines, test_number)
-        )
         # add additional info
         with open(test_pl) as f:
             test_verdict["test_text"] = f.read()
@@ -87,12 +85,63 @@ def parse_output(output_lines):
 
 
 def get_task_tests(task):
+    valid_exts = ['.ans', '.py']
     tests = []
     for test_pl in (TESTS_DIRECTORY / task).glob("test*.pl"):
         test_number = int(test_pl.name.replace("test_", "").replace(".pl", ""))
+        
         test_ans = test_pl.with_name(test_pl.name[: -(len(".pl"))] + ".ans")
-        tests.append((test_number, test_pl, test_ans))
+        test_py = test_pl.with_name(test_pl.name[: -(len(".pl"))] + ".py")
+
+        test_basename = test_pl.name[: -(len(".pl"))]
+        for ext in valid_exts:
+            test_ans = test_pl.with_name(test_basename + ext)
+            if os.path.exists(test_ans):
+                tests.append((test_number, test_pl, test_ans))
+                break
     return sorted(tests)  # sorted by test_number (int)
+
+def perform_test(output, test_ans, test_number):
+    output_lines = parse_output(output)
+    
+    ext = os.path.splitext(test_ans)[-1].lower()
+    if ext == '.ans':
+        return test_result_equal(output_lines, test_ans, test_number)
+    elif ext == '.py':
+        return test_with_script(output_lines, test_ans, test_number)
+
+    return TestResult(
+        test_number,
+        "IE: Incorrect test configuration, contact system admin.", 
+        output_lines, 
+        '')
+
+
+def test_with_script(output_lines, test_ans, test_number):
+    test_ans = os.path.splitext(test_ans)[0]
+    test_ans = test_ans.replace('/', '.')
+    test_ans = str(test_ans)
+
+    test_dir = '/'.join(test_ans.split('.')[:-1])
+    #test_ans = test_ans.split('.')[-1]
+
+    sys.path.append(test_dir)
+
+    test_module = importlib.import_module(test_ans)
+    importlib.reload(test_module) # To load changes in tests during server running
+    func = getattr(test_module, 'test_result')
+    result = dataclasses.asdict(TestResult(*test_module.test_result(output_lines, test_number)))
+    sys.path.remove(test_dir)
+    return result
+
+
+def test_result_equal(output_lines, test_ans, test_number):
+    with open(test_ans) as f:
+        correct_lines = [line.strip() for line in f]
+    test_verdict = dataclasses.asdict(
+        get_test_verdict(output_lines, correct_lines, test_number)
+    )
+    return test_verdict
 
 
 def get_test_verdict(output_lines, correct_lines, test_number):
