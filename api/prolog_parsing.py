@@ -103,7 +103,7 @@ def perform_test(output, test_ans, test_number):
 
     ext = test_ans.suffix.lower()
     if ext == ".ans":
-        return test_result_equal(output_lines, test_ans, test_number)
+        return test_string_equality(output_lines, test_ans, test_number)
     elif ext == ".py":
         return test_with_script(output_lines, test_ans, test_number)
 
@@ -125,7 +125,6 @@ def test_with_script(output_lines, test_ans, test_number):
 
         test_module = importlib.import_module(test_ans_module)
         importlib.reload(test_module)  # To load changes in tests during server running
-        func = getattr(test_module, "test_result")
         return dataclasses.asdict(
             TestResult(*test_module.test_result(output_lines, test_number))
         )
@@ -133,7 +132,7 @@ def test_with_script(output_lines, test_ans, test_number):
         sys.path.remove(test_dir)
 
 
-def test_result_equal(output_lines, test_ans, test_number):
+def test_string_equality(output_lines, test_ans, test_number):
     with open(test_ans) as f:
         correct_lines = [line.strip() for line in f]
     test_verdict = dataclasses.asdict(
