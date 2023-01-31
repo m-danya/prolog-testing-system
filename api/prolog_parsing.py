@@ -3,6 +3,8 @@ import os
 import re
 import signal
 import subprocess
+import importlib
+import sys
 
 from settings import *
 from dataclasses import dataclass
@@ -49,12 +51,8 @@ def execute_on_tests(submission_id, task, cmd_template):
             output = "Fatal Error: TL"
             os.killpg(os.getpgid(process.pid), signal.SIGTERM)
 
-        output_lines = parse_output(output)
-        with open(test_ans) as f:
-            correct_lines = [line.strip() for line in f]
-        test_verdict = dataclasses.asdict(
-            get_test_verdict(output_lines, correct_lines, test_number)
-        )
+        test_verdict = perform_test(output, test_ans, test_number)
+
         # add additional info
         with open(test_pl) as f:
             test_verdict["test_text"] = f.read()
@@ -90,9 +88,57 @@ def get_task_tests(task):
     tests = []
     for test_pl in (TESTS_DIRECTORY / task).glob("test*.pl"):
         test_number = int(test_pl.name.replace("test_", "").replace(".pl", ""))
-        test_ans = test_pl.with_name(test_pl.name[: -(len(".pl"))] + ".ans")
-        tests.append((test_number, test_pl, test_ans))
+
+        test_basename = test_pl.name[: -(len(".pl"))]
+        for ext in TEST_EXTS:
+            test_ans = test_pl.with_name(test_basename + ext)
+            if test_ans.exists():
+                tests.append((test_number, test_pl, test_ans))
+                break
     return sorted(tests)  # sorted by test_number (int)
+
+
+def perform_test(output, test_ans, test_number):
+    output_lines = parse_output(output)
+
+    ext = test_ans.suffix.lower()
+    if ext == ".ans":
+        return test_string_equality(output_lines, test_ans, test_number)
+    elif ext == ".py":
+        return test_with_script(output_lines, test_ans, test_number)
+
+    return TestResult(
+        test_number,
+        "IE: Incorrect test configuration, contact system admin.",
+        output_lines,
+        [],
+    )
+
+
+def test_with_script(output_lines, test_ans, test_number):
+    test_ans_module = str(test_ans.stem).replace("/", ".")
+
+    test_dir = str(test_ans.parent)
+
+    try:
+        sys.path.append(test_dir)
+
+        test_module = importlib.import_module(test_ans_module)
+        importlib.reload(test_module)  # To load changes in tests during server running
+        return dataclasses.asdict(
+            TestResult(*test_module.test_result(output_lines, test_number))
+        )
+    finally:
+        sys.path.remove(test_dir)
+
+
+def test_string_equality(output_lines, test_ans, test_number):
+    with open(test_ans) as f:
+        correct_lines = [line.strip() for line in f]
+    test_verdict = dataclasses.asdict(
+        get_test_verdict(output_lines, correct_lines, test_number)
+    )
+    return test_verdict
 
 
 def get_test_verdict(output_lines, correct_lines, test_number):
