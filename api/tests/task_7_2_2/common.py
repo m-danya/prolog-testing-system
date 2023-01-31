@@ -2,9 +2,14 @@ import re
 from testlib.errorcheck import check_for_errors
 
 
-def test(output_lines, test_number, correct_lines, expected):
+def build_correct_linse(expected):
+    return [f"Result = [[[{','.join(str(expected))}]]]", "yes"]
+
+
+def test(output_lines, test_number, expected):
+    correct_lines = build_correct_linse(expected)
     error = check_for_errors(output_lines, test_number, correct_lines)
-    if error is not None:
+    if error:
         return error
 
     # parsing a string "Result = [[[1,3,5,17]]]"
