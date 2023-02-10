@@ -1,9 +1,2 @@
-my_length(List, Length) :-
-  list(List),
-  my_length(List, 0, Length).
-
-my_length([_|Tail], Accumulator, Length) :-
-  NewAccumulator is Accumulator + 1,
-  my_length(Tail, NewAccumulator, Length).
-
-my_length([], Length, Length).
+my_length([], 0).
+my_length([_|T], N) :- my_length(T, N1), N is N1 + 1.
